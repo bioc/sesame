@@ -196,9 +196,9 @@ dyeBiasL <- function(sdf, ref=NULL) {
     }
 
     muR <- signalMU(InfIR(sdf))
-    fR <- ref / median(muR$M, muR$U, na.rm = TRUE)
+    fR <- ref / median(c(muR$M, muR$U), na.rm = TRUE)
     muG <- signalMU(InfIG(sdf))
-    fG <- ref / median(muG$M, muG$U, na.rm = TRUE)
+    fG <- ref / median(c(muG$M, muG$U), na.rm = TRUE)
     
     sdf$MG <- sdf$MG * fG
     sdf$UG <- sdf$UG * fG
