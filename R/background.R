@@ -202,25 +202,23 @@ setting adjusted intensities to small value")
     offset + signal
 }
 
-## train model using linear model with log transformed response
-train.model.lm <- function(input, output) {
-
-    fitdata <- data.frame(IB=as.vector(input)+1, LOB=log(as.vector(output)+1))
-    m <- lm(LOB~IB, data=fitdata)
-    ## m <- MASS::rlm(LOB~IB, data=fitdata)
-
-    function(d) {
-        force(m)
-        pp <- predict(
-            m, newdata=data.frame(IB=as.vector(d)),
-            interval='prediction', level=0.8)
+## ## train model using linear model with log transformed response
+## train.model.lm <- function(input, output) {
+##     fitdata <- data.frame(IB=as.vector(input)+1, LOB=log(as.vector(output)+1))
+##     m <- lm(LOB~IB, data=fitdata)
+##     ## m <- MASS::rlm(LOB~IB, data=fitdata)
+##     function(d) {
+##         force(m)
+##         pp <- predict(
+##             m, newdata=data.frame(IB=as.vector(d)),
+##             interval='prediction', level=0.8)
         
-        list(mu=exp(pp[,'fit']), sigma=(exp(pp[,'upr'])-exp(pp[,'lwr']))/10.13)
-        ## use upper bound for mu since true signal
-        ## is often much higher than noise
-        ## list(mu=exp(pp[,'upr']),
-        ## sigma=(exp(pp[,'upr'])-exp(pp[,'lwr']))/10.13)
-        ## list(mu=exp(pp[,'upr']),
-        ## sigma=log(exp(pp[,'upr'])-exp(pp[,'lwr'])))
-    }
-}
+##         list(mu=exp(pp[,'fit']), sigma=(exp(pp[,'upr'])-exp(pp[,'lwr']))/10.13)
+##         ## use upper bound for mu since true signal
+##         ## is often much higher than noise
+##         ## list(mu=exp(pp[,'upr']),
+##         ## sigma=(exp(pp[,'upr'])-exp(pp[,'lwr']))/10.13)
+##         ## list(mu=exp(pp[,'upr']),
+##         ## sigma=log(exp(pp[,'upr'])-exp(pp[,'lwr'])))
+##     }
+## }

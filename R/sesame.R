@@ -276,7 +276,8 @@ inferPlatformFromTango <- function(res) {
     sig <- sesameDataGet('idatSignature')
     cnts <- vapply(
         sig, function(x) sum(x %in% rownames(res$Quants)), integer(1))
-    if (max(cnts) < min(vapply(sig, length, numeric(1)))) {
+    if (max(cnts) < 0.8*min(vapply(sig, length, numeric(1))) || 
+        sum(cnts == max(cnts)) > 1) {
         return(NULL)
     }
     names(which.max(cnts))
