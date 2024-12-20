@@ -289,8 +289,9 @@ testEnrichmentFisherN <- function(
         p.value = 10**(log10.p.value),
         log10.p.value = log10.p.value,
         test = "Log2(OR)",
-        nQ = nQ, nD = nD, overlap = nDQ,
+        nU = nU, nQ = nQ, nD = nD, overlap = nDQ,
         cf_Jaccard = nDQ / (nD + nQmD),
+        cf_MCC = (nDQ*nUmDQ - nQmD*nDmQ) / sqrt(nD*(nU-nD)*nQ*(nU-nQ)),
         cf_overlap = nDQ / pmin(nD, nQ), # Szymkiewicz–Simpson
         cf_NPMI = (log2(nD)+log2(nQ)-2*log2(nU))/(log2(nDQ)-log2(nU))-1,
         cf_SorensenDice = 2 * nDQ/(nD + nQ))
