@@ -90,6 +90,4 @@ Collate:
     'visualize.R'
     'visualizeHelper.R'
     'zzz.R'
-    'KYCG.R'
-    'KYCG_plot.R'
     'palgen.R'

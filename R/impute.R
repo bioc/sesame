@@ -50,6 +50,10 @@ imputeBetas <- function(betas, platform = NULL, BPPARAM = SerialParam(),
 #' @param BPPARAM use MulticoreParam(n) for parallel processing
 #' @return imputed data, vector or matrix
 #' @importFrom GenomicRanges resize
+#' @importFrom GenomicRanges findOverlaps
+#' @importFrom S4Vectors subjectHits
+#' @importFrom S4Vectors queryHits
+#' @importFrom dplyr summarize
 #' @examples
 #' betas = openSesame(sesameDataGet("EPICv2.8.SigDF")[[1]])
 #' sum(is.na(betas))

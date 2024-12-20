@@ -55,6 +55,97 @@ resetMask <- function(sdf, verbose = FALSE) {
     sdf
 }
 
+KYCG_listDBGroups <- function(filter = NULL, path = NULL, type = NULL) {
+
+    if (is.null(path)) {
+        gps <- sesameDataList("KYCG", full=TRUE)[,c("Title","Description")]
+        gps$type <- vapply(strsplit(
+            gps$Description, " "), function(x) x[2], character(1))
+        gps$Description <- str_replace(
+            gps$Description, "KYCG categorical database holding ", "")
+        if (!is.null(filter)) {
+            gps <- gps[grepl(filter, gps$Title),]
+        }
+        if (!is.null(type)) {
+            gps <- gps[gps$type %in% type,]
+        }
+    } else {
+        gps <- basename(list.files(path, recursive = TRUE))
+    }
+    gps
+}
+
+guess_dbnames <- function(nms, platform = NULL,
+    allow_multi = FALSE, type = NULL, silent = FALSE,
+    ignore.case = FALSE) {
+    
+    gps <- KYCG_listDBGroups(type = type)
+    nms <- do.call(c, lapply(nms, function(nm) {
+        if (nm %in% gps$Title) {
+            return(nm)
+        } else if (length(grep(nm, gps$Title, ignore.case=ignore.case)) >= 1) {
+            ret <- grep(nm, gps$Title, value=TRUE, ignore.case=ignore.case)
+            if (!allow_multi) { ret <- ret[1]; }
+            return(ret)
+        } else if (length(grep(nm, gps$Title, ignore.case=ignore.case)) == 0) {
+            res <- gps$Title[apply(do.call(cbind, lapply(
+                strsplit(nm, "\\.")[[1]],
+                function(q1) grepl(q1, gps$Title, ignore.case=ignore.case))),
+                1, all)]
+            if (length(res) == 1) {
+                return(res[1])
+            }
+        }
+        return(nm)
+    }))
+    if (!is.null(platform)) {
+        nms <- grep(platform, nms, value = TRUE)
+    }
+    if (!silent) {
+        message("Selected the following database groups:")
+        invisible(lapply(seq_along(nms), function(i) {
+            message(sprintf("%d. %s", i, nms[i]))
+        }))
+    }
+    nms
+}
+
+## now an internal function
+KYCG_getDBs <- function(group_nms, db_names = NULL, platform = NULL,
+    summary = FALSE, allow_multi = FALSE,
+    ignore.case = FALSE, type = NULL, silent = FALSE) {
+    
+    if (!is.character(group_nms)) {
+        return(group_nms)
+    }
+
+    group_nms <- guess_dbnames(group_nms, platform = platform,
+        allow_multi = TRUE, type = type, silent = silent,
+        ignore.case = ignore.case)
+    ## group_nms <- group_nms[sesameDataHas(group_nms)]
+    group_nms <- group_nms[group_nms %in% sesameDataList()$Title]
+    if (length(group_nms) == 0) {
+        return(NULL)
+    }
+    res <- do.call(c, lapply(unname(group_nms), function(nm) {
+        dbs <- sesameDataGet(nm)
+        setNames(lapply(seq_along(dbs), function(ii) {
+            db <- dbs[[ii]]
+            attr(db, "group") <- nm
+            attr(db, "dbname") <- names(dbs)[ii]
+            db
+        }), names(dbs))}))
+    
+    if (summary) {
+        do.call(bind_rows, lapply(res, attributes))
+    } else if (is.null(db_names)) {
+        res
+    } else {
+        stopifnot(all(db_names %in% names(res)))
+        res[db_names]
+    }
+}
+
 #' list existing quality masks for a SigDF
 #'
 #' @param platform EPIC, MM285, HM450 etc
@@ -62,6 +153,7 @@ resetMask <- function(sdf, verbose = FALSE) {
 #' @return a tibble of masks
 #' @examples
 #' listAvailableMasks("EPICv2")
+#' @importFrom reshape2 melt
 #' @export
 listAvailableMasks <- function(platform, verbose = FALSE) {
     stopifnot(is.character(platform))
