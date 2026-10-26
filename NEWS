@@ -1,3 +1,25 @@
+CHANGES IN VERSION 1.31.9
+-------------------------
+
+  o Documentation fixes from a review of the vignettes. The inference
+    vignette shows its library(sesame) and caching setup, gives raw
+    download URLs for the two clock files, states the mouse age the code
+    returns (1.18 months) and re-identifies from ~/Downloads in both calls.
+    The Basic Usage and QC vignettes define idat_dir as the built-in HM27
+    IDATs. The non-human vignette drops an undefined tmp and uses prep code
+    SHCDPB, as the Basic Usage table recommends for Mammal40. Ethnicity is
+    no longer listed as an inference in DESCRIPTION or the vignette.
+
+  o sesameQCtoDF() works on HM27: the median beta statistics are unnamed,
+    so an array without ch or rs probes no longer gives "row names contain
+    missing values".
+
+  o matchDesign() (prep code M) stops with an install line when the
+    suggested package RPMM is missing.
+
+  o inferSpecies() warns when fewer than 30% of the probes are detected,
+    since the species call is then unreliable.
+
 CHANGES IN VERSION 1.31.8
 -------------------------
 

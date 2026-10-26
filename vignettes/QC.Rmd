@@ -27,11 +27,14 @@ QC metrics on a given list of samples or all IDATs in a folder, one can use
 off preprocessing using `prep=""`:
 
 ```{r qc1, eval=FALSE}
+## a folder with two built-in HM27 IDAT pairs
+idat_dir = system.file("extdata", package = "sesameData")
 ## calculate metrics on all IDATs in a specific folder
 sesameQCtoDF(openSesame(idat_dir, prep="", func=sesameQC_calcStats))
 ## or a list of prefixes, with parallel processing
+idat_prefixes = c("4207113116_A", "4207113116_B")
 sesameQCtoDF(openSesame(sprintf("%s/%s", idat_dir, idat_prefixes), prep="",
-    func=sesameQC_calcStats, BPPARAM=BiocParallel::MulticoreParam(24)))
+    func=sesameQC_calcStats, BPPARAM=BiocParallel::MulticoreParam(2)))
 ```
 
 The results display `frac_dt_cg`, `RGratio`, `RGdistort` by default. For other

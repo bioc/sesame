@@ -70,6 +70,8 @@ species_ret <- function(
 #' We infer species based on probes pvalues and alignment score.
 #' AUC was calculated for each specie, y_true is 1 or 0 
 #' for pval < threshold.pos or pval > threshold.neg, respeceively,
+#' A warning is issued when fewer than 30\% of the probes are detected,
+#' since the species call is then unreliable.
 #'
 #' @param sdf a \code{SigDF}
 #' @param topN Top n positive and negative probes used to infer species.
@@ -104,7 +106,12 @@ inferSpecies <- function(sdf, topN = 1000, threshold.pos = 0.01,
     pos_probes <- sort(pvalue[pvalue <= threshold.pos],decreasing = FALSE)
     neg_probes <- sort(pvalue[pvalue >= threshold.neg],decreasing = TRUE)
     success.rate <- length(pvalue[pvalue<=0.05]) / length(pvalue)
-    
+    if (success.rate < 0.3) { # mostly background, a poor species call
+        warning("Only ", sprintf("%.1f", success.rate * 100),
+            "% of probes are detected (p <= 0.05). ",
+            "The species call may be unreliable.")
+    }
+
     ## keep the same number of positive and negative probes.
     topN1 <- min(length(neg_probes),length(pos_probes), topN)
     pos <- pos_probes[seq_len(topN1)]

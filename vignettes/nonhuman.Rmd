@@ -52,14 +52,14 @@ from
 https://github.com/zhou-lab/InfiniumAnnotationV1/tree/main/Test
 
 ```{r nh3, message=FALSE, eval=FALSE}
-betas = openSesame(sprintf("~/Downloads/GSM4411982", tmp), prep="SHCDPM")
+betas = openSesame("~/Downloads/GSM4411982", prep="SHCDPB")
 ```
 
 The above code is equivalent to
 
 ```{r nh4, eval=FALSE}
 ## equivalent to the above openSesame call
-betas = getBetas(matchDesign(pOOBAH(dyeBiasNL(inferInfiniumIChannel(
+betas = getBetas(noob(pOOBAH(dyeBiasNL(inferInfiniumIChannel(
     prefixMaskButC(inferSpecies(readIDATpair(
         "~/Downloads/GSM4411982"))))))))
 ```
@@ -76,6 +76,11 @@ function to return the inferred species information by using the
 sdf = sesameDataGet("Mammal40.1.SigDF") # an example SigDF
 inferSpecies(sdf, return.species = TRUE)
 ```
+
+This example array has low detection (most probes are background), so its
+species call is poor and `inferSpecies` warns about it. A good-quality array,
+such as the GSM4411982 mouse sample above, is inferred correctly as
+`mus_musculus`.
 
 Internally, we used a nonparametric scoring method to infer the most likely
 species from a pool of 310 candidate species from Ensembl (v101). The

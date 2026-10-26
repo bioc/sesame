@@ -82,7 +82,8 @@ The following code uses a directory that contains built-in two HM27 IDAT pairs
 to demonstrates the use of `openSesame`:
 
 ```{r base1, eval=FALSE}
-betas = openSesame("path_to_idats", BPPARAM = BiocParallel::MulticoreParam(2))
+idat_dir = system.file("extdata", package = "sesameData")
+betas = openSesame(idat_dir, BPPARAM = BiocParallel::MulticoreParam(2))
 ```
 
 The `BPPARAM=` option is from the `BiocParallel` package and controls parallel
@@ -284,15 +285,15 @@ TRUE)`. The same argument can be passed to `openSesame(..., func=getBetas,
 collapseToPfx=TRUE)`
 
 ```{r collapse_betas, eval=FALSE}
-betas = getBetas(sdf_from_EPICv2, collapseToPfx = TRUE)
+betas = getBetas(sdf, collapseToPfx = TRUE) # the EPICv2 SigDF from above
 ## or
-betas = openSesame("path_to_idats", collapseToPfx = TRUE)
+betas = openSesame(idat_dir, collapseToPfx = TRUE)
 ## by default the method for collapsing is to make means
 betas = openSesame(
-    "path_to_idats", collapseToPfx = TRUE, collapseMethod = "mean")
+    idat_dir, collapseToPfx = TRUE, collapseMethod = "mean")
 ## one can also switch to min detection p-value
 betas = openSesame(
-    "path_to_idats", collapseToPfx = TRUE, collapseMethod = "minPval")
+    idat_dir, collapseToPfx = TRUE, collapseMethod = "minPval")
 ```
 
 One may also use the `betasCollapseToPfx` function to generate the traditional

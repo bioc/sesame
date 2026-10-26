@@ -45,7 +45,7 @@ sesameQCtoDF <- function(qcs, cols=c("frac_dt_cg","RGdistort", "RGratio")) {
     if (is.list(qcs)) {
         df <- bind_rows(lapply(qcs, sesameQCtoDF))
     } else if (is(qcs, "sesameQC")) {
-        df <- as.data.frame(qcs@stat)
+        df <- as.data.frame(lapply(qcs@stat, unname))
     }
     if (!is.null(cols) && any(colnames(df) %in% cols)) {
         df <- df[, colnames(df) %in% cols, drop=FALSE]
@@ -406,7 +406,7 @@ sesameQC_calcStats_betas <- function(sdf, qc = NULL) {
     
     betas <- getBetas(pOOBAH(noob(dyeBiasNL(sdf))))
     s$mean_beta <- mean(betas, na.rm = TRUE)
-    s$median_beta <- median(betas, na.rm = TRUE)
+    s$median_beta <- unname(median(betas, na.rm = TRUE))
     s$frac_unmeth <- sum(betas < 0.3, na.rm = TRUE)/sum(!is.na(betas))
     s$frac_meth <- sum(betas > 0.7, na.rm = TRUE)/sum(!is.na(betas))
     s$num_na <- sum(is.na(betas))
@@ -415,7 +415,8 @@ sesameQC_calcStats_betas <- function(sdf, qc = NULL) {
     for (pt in c('cg','ch','rs')) {
         b1 <- betas[grep(paste0('^', pt), names(betas))]
         s[[paste0('mean_beta_', pt)]] <- mean(b1, na.rm = TRUE)
-        s[[paste0('median_beta_', pt)]] <- median(b1, na.rm = TRUE)
+        ## unname: median() of an empty named vector is NA named NA
+        s[[paste0('median_beta_', pt)]] <- unname(median(b1, na.rm = TRUE))
         s[[paste0('frac_unmeth_', pt)]] <-
             sum(b1 < 0.3, na.rm = TRUE) / sum(!is.na(b1))
         s[[paste0('frac_meth_', pt)]] <-

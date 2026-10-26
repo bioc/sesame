@@ -39,6 +39,8 @@ a SigDF
 We infer species based on probes pvalues and alignment score.
 AUC was calculated for each specie, y_true is 1 or 0 
 for pval < threshold.pos or pval > threshold.neg, respeceively,
+A warning is issued when fewer than 30\% of the probes are detected,
+since the species call is then unreliable.
 }
 \examples{
 sdf <- sesameDataGet("MM285.1.SigDF")

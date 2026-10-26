@@ -11,11 +11,11 @@ vignette: >
   %\VignetteEncoding{UTF-8} 
 ---
 
-SeSAMe implements inference of sex, age, ethnicity. These are valuable
+SeSAMe implements inference of sex and age. These are valuable
 information for checking the integrity of the experiment and detecting sample
 swaps.
 
-```{r inf1, echo=FALSE, message=FALSE, warning=FALSE}
+```{r inf1, message=FALSE, warning=FALSE}
 library(sesame)
 sesameDataCache()
 sdf = sesameDataGet('EPIC.1.SigDF')
@@ -58,7 +58,10 @@ chronological age in the number of years. Here is an example:
 
 ```{r inf4, eval=FALSE}
 betas <- sesameDataGet('HM450.1.TCGA.PAAD')$betas
-## download clock file from http://zwdzwd.github.io/InfiniumAnnotation
+## download the clock file first, e.g., with
+## download.file(paste0("https://raw.githubusercontent.com/zhou-lab/",
+##     "InfiniumAnnotationData/main/Anno/HM450/Clock_Horvath353.rds"),
+##     "~/Downloads/Clock_Horvath353.rds")
 model <- readRDS("~/Downloads/Clock_Horvath353.rds")
 predictAge(betas, model)
 ```
@@ -71,12 +74,15 @@ preprocessed data as input to the function. Here’s an example:
 ```{r inf18, message=FALSE, eval=FALSE}
 library(SummarizedExperiment)
 betas <- assay(sesameDataGet("MM285.10.SE.tissue"))[,1]
-## download clock file from http://zwdzwd.github.io/InfiniumAnnotation
+## download the clock file first, e.g., with
+## download.file(paste0("https://raw.githubusercontent.com/zhou-lab/",
+##     "InfiniumAnnotationData/main/Anno/MM285/Clock_Zhou347.rds"),
+##     "~/Downloads/Clock_Zhou347.rds")
 model <- readRDS("~/Downloads/Clock_Zhou347.rds")
 predictAge(betas, model)
 ```
 
-This indicates that this mouse is approximately 1.41 months old. The function
+This indicates that this mouse is approximately 1.18 months old. The function
 looks for overlapping probes and estimates age using the corresponding clock
 models. 
 
@@ -120,11 +126,6 @@ estimateLeukocyte(betas.tissue)
 The goal of data sanitization is to modifiy IDAT files in place, so they can be
 released to public domain without privacy leak. This will be achieved by
 deIdentification.
-
-```{r inf8, message=FALSE, warning=FALSE, include=FALSE}
-library(sesame)
-sesameDataCacheAll()
-```
 
 Let's take DNA methylation data from the HM450 platform for example.
 First, let's download test IDATs from
@@ -190,8 +191,8 @@ The reIdentify function can thus restore the scrambled SNP intensities.
 my_secret <- 13412084
 set.seed(my_secret)
 
-reIdentify(sprintf("%s/deidentified_Grn.idat", tmp),
-    sprintf("%s/reidentified_Grn.idat", tmp))
+reIdentify("~/Downloads/deidentified_Grn.idat",
+    "~/Downloads/reidentified_Grn.idat")
 
 my_secret <- 13412084
 set.seed(my_secret)

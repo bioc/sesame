@@ -80,6 +80,10 @@ match1To2_3states <- function(sdf) {
 #'
 #' @export
 matchDesign <- function(sdf, min_dbeta = 0.3) {
+    if (!requireNamespace("RPMM", quietly = TRUE)) {
+        stop("matchDesign (prep code M) needs the RPMM package. ",
+            "Install it with BiocManager::install(\"RPMM\").")
+    }
     dR <- noMasked(InfIR(sdf))
     dG <- noMasked(InfIG(sdf))
     d2 <- noMasked(InfII(sdf))
