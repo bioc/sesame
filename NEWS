@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.31.10
+-------------------------
+
+  o The startup message points at the knowYourCG package for enrichment
+    of CpG sets.
+
 CHANGES IN VERSION 1.31.9
 -------------------------
 
